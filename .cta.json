@@ -1,0 +1,20 @@
+{
+  "projectName": "my-profile",
+  "mode": "file-router",
+  "typescript": true,
+  "tailwind": true,
+  "packageManager": "bun",
+  "addOnOptions": {},
+  "git": true,
+  "version": 1,
+  "framework": "react-cra",
+  "chosenAddOns": [
+    "biome",
+    "netlify",
+    "neon",
+    "oRPC",
+    "shadcn",
+    "tanstack-query",
+    "start"
+  ]
+}
