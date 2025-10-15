@@ -1,27 +1,31 @@
+// routes/__root.tsx
 import type { QueryClient } from '@tanstack/react-query'
 import {
   createRootRouteWithContext,
   HeadContent,
   Scripts,
+  Outlet,
 } from '@tanstack/react-router'
+import { LoadingAnimation } from '../components/LoadingAnimation'
 import appCss from '../styles.css?url'
 
 interface MyRouterContext {
   queryClient: QueryClient
 }
 
-// Root route with context
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'TanStack Start App' },
+      { title: 'Mujtaba Al Raban - Portfolio' },
     ],
     links: [{ rel: 'stylesheet', href: appCss }],
   }),
 
   shellComponent: RootDocument,
+
+  pendingComponent: () => <LoadingAnimation message="Loading page..." />,
 
   // Optional: default NotFound component for unmatched routes
   notFoundComponent: () => (

@@ -1,17 +1,18 @@
 // profile.tsx - Updated with KFUPM-compatible colors
 import { createFileRoute } from '@tanstack/react-router'
-import { Briefcase, Calendar, Cloud, Code, Cpu, Database, Github, Linkedin, Mail, MapPin, Rocket, Smartphone, Sparkles, Star, Target, Twitter, Zap } from 'lucide-react'
+import { Calendar, Cloud, Code, Cpu, Database, Github, Linkedin, Mail, MapPin, Rocket, Smartphone, Sparkles, Target, Zap } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { CoverSection } from '../components/profile/CoverSection'
 import { InfoItems } from '../components/profile/InfoItems'
 import { ProfileHeader } from '../components/profile/ProfileHeader'
 import { SocialLinks } from '../components/profile/SocialLinks'
-import { Stats } from '../components/profile/Stats'
 import { TabContent } from '../components/profile/TabContent'
 import { useMousePosition } from '../hooks/useMousePosition'
+import { LoadingAnimation } from '@/components/LoadingAnimation'
+
 
 const HexagonalBackground = () => {
-  const hexagons = Array.from({ length: 50 }, (_, i) => ({
+  const hexagons = Array.from({ length: 50 }, (_, i) => ({ 
     id: `hex-${i}`,
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
@@ -92,18 +93,32 @@ const MouseTrail = ({ mousePosition }: { mousePosition: { x: number; y: number }
   </>
 )
 
-export const Route = createFileRoute('/profile')({ component: Profile })
+
+export const Route = createFileRoute('/profile')({ 
+  component: Profile,
+  pendingComponent: () => <LoadingAnimation message="Loading profile..." />,
+})
 
 function Profile() {
   const [activeTab, setActiveTab] = useState('about')
   const [isVisible, setIsVisible] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const mousePosition = useMousePosition()
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100)
+    setIsLoading(true)
+    const timer = setTimeout(() => {
+      setIsVisible(true)
+      setIsLoading(false)
+    }, 600) // Simulate loading time
+    
     return () => clearTimeout(timer)
   }, [])
 
+  // Show loading animation while data is being prepared
+  if (isLoading) {
+    return <LoadingAnimation message="Loading profile..." />
+  }
   const tabs = [
     { id: 'about', label: 'About', icon: Sparkles },
     { id: 'experience', label: 'Experience', icon: Rocket },
@@ -121,11 +136,7 @@ function Profile() {
     location: 'Saihat, Saudi Arabia',
     email: 'mujtabaalraban@gmail.com',
     joinDate: 'KFUPM Graduate — Class of 2024',
-    stats: { 
-      projects: { value: 2, label: 'Projects' }, 
-      followers: { value: '—', label: 'Community' }, 
-      following: { value: '—', label: 'Collaborations' } 
-    },
+    
     skills: [
       { name: 'React & Flutter', level: 95, icon: Code, color: 'from-amber-400 to-orange-500' },
       { name: 'TypeScript / JavaScript', level: 90, icon: Code, color: 'from-orange-400 to-amber-500' },
@@ -185,15 +196,16 @@ function Profile() {
         name: 'Tournament Mobile Application',
         description: 'A mobile platform for tracking and participating in tournaments with live updates and user-friendly interface.',
         tech: ['Flutter', 'Firebase'],
+        liveUrl: 'https://github.com/MujtabaRaban/flutter_application',
         githubUrl: 'https://github.com/MujtabaRaban/flutter_application',
         featured: false,
       },
       {
-        name: 'Profile website',
+        name: 'Profile Website',
         description: 'A website that show the complated profile for me .',
-        tech: ['react', 'Postgres', 'GitHub'],
-        liveUrl: '',
-        githubUrl: '',
+        tech: ['React', 'Postgres', 'GitHub'],
+        liveUrl: 'https://github.com/MujtabaRaban/my-profile.git',
+        githubUrl: 'https://github.com/MujtabaRaban/my-profile',
         featured: true,
       },
     ],
@@ -217,7 +229,12 @@ function Profile() {
     { icon: Calendar, text: user.joinDate },
   ]
 
-  const socialIcons = [Github, Linkedin, Twitter]
+  const socialLinks = [
+    { Icon: Github, name: 'GitHub', url: 'https://github.com/MujtabaRaban' },
+    { Icon: Linkedin, name: 'LinkedIn', url: 'https://www.linkedin.com/in/mujtaba-al-raban-017590264' },
+   
+  ]
+  
 
   return (
     <div className="min-h-screen bg-transparent overflow-x-hidden">
@@ -243,10 +260,10 @@ function Profile() {
             }`}>
               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                 <InfoItems items={infoItems} isVisible={isVisible} />
-                <SocialLinks icons={socialIcons} isVisible={isVisible} />
+                <SocialLinks links={socialLinks} isVisible={isVisible} />
               </div>
               
-              <Stats stats={user.stats} isVisible={isVisible} />
+             
             </div>
           </div>
         </div>
